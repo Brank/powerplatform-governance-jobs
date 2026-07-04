@@ -2,6 +2,7 @@ Write-Host "Starting Power Platform export job..."
 $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
 $outputFolder = "/app/Output-$timestamp"
 New-Item -ItemType Directory -Force -Path $outputFolder | Out-Null
+New-Item -ItemType Directory -Force -Path "$outputFolder/env-settings" | Out-Null
 
 $storageAccountName = $env:STORAGE_ACCOUNT_NAME
 $containerName = $env:STORAGE_CONTAINER_NAME
@@ -41,7 +42,7 @@ $environments | ConvertTo-Json -Depth 10 | Out-File "$outputFolder/environments.
 # For each environment get the settings pac env list-settings
 foreach ($ppenv in $environments) {
     #Self-elevate to System Administrator role
-    pac admin self-elevate --environment $ppenv.EnvironmentId
+    #pac admin self-elevate --environment $ppenv.EnvironmentId
 
     #Get settings
     pac env list-settings --environment $ppenv.EnvironmentUrl --json | Out-File "$outputFolder/env-settings/$($ppenv.DisplayName).json"
